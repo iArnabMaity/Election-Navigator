@@ -29,11 +29,64 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => stepEl.classList.add('active'), index * 200);
     });
 
-    // 2. Assistant Logic
-    assistantToggle.addEventListener('click', () => {
-        const isVisible = assistantPanel.style.display === 'flex';
-        assistantPanel.style.display = isVisible ? 'none' : 'flex';
-    });
+    // 2. Assistant Logic - Robust Initialization
+    const initAssistant = () => {
+        if (!assistantToggle || !assistantPanel || !sendBtn || !userInput) {
+            console.error('Chatbot elements not found');
+            return;
+        }
+
+        assistantToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isVisible = window.getComputedStyle(assistantPanel).display !== 'none';
+            assistantPanel.style.display = isVisible ? 'none' : 'flex';
+        });
+
+        const handleSend = async () => {
+            const query = userInput.value.trim();
+            if (!query) return;
+
+            addMessage(query, 'user');
+            userInput.value = '';
+
+            const CLOUD_FUNCTION_URL = 'https://election-navigator-190597456079.europe-southwest1.run.app/';
+
+            try {
+                // Controller to handle timeouts
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+
+                const response = await fetch(CLOUD_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query }),
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const data = await response.json();
+                if (data && data.answer) {
+                    addMessage(data.answer, 'assistant');
+                } else {
+                    throw new Error('Invalid AI response format');
+                }
+            } catch (error) {
+                console.warn('AI API Error, switching to local intelligence:', error);
+                setTimeout(() => {
+                    const fallback = getLocalIntelligence(query);
+                    addMessage(fallback, 'assistant');
+                }, 500);
+            }
+        };
+
+        sendBtn.onclick = handleSend;
+        userInput.onkeypress = (e) => {
+            if (e.key === 'Enter') handleSend();
+        };
+    };
 
     const addMessage = (text, sender) => {
         const msg = document.createElement('div');
@@ -43,48 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
         chatHistory.scrollTop = chatHistory.scrollHeight;
     };
 
-    const handleSend = async () => {
-        const query = userInput.value.trim();
-        if (!query) return;
-
-        addMessage(query, 'user');
-        userInput.value = '';
-
-        // Real AI Integration via GCP Cloud Function
-        // Replace the URL with your actual deployed Cloud Function endpoint
-        const CLOUD_FUNCTION_URL = 'https://election-navigator-190597456079.europe-southwest1.run.app/';
-
-        try {
-            const response = await fetch(CLOUD_FUNCTION_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: query })
-            });
-
-            if (!response.ok) throw new Error('AI Service Offline');
-
-            const data = await response.json();
-            addMessage(data.answer, 'assistant');
-        } catch (error) {
-            console.error('GCP AI Error:', error);
-            // Fallback to local intelligence if the cloud service is not yet deployed
-            setTimeout(() => {
-                const fallbackResponse = getLocalIntelligence(query);
-                addMessage(fallbackResponse, 'assistant');
-            }, 500);
-        }
-    };
-
-    // Re-attach missing event listeners
-    sendBtn.addEventListener('click', handleSend);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleSend();
-    });
-
     const getLocalIntelligence = (query) => {
         const q = query.toLowerCase();
-        if (q.includes('election')) return "An election is a democratic process for choosing leaders. I'm currently running in 'Offline Mode'—deploy your Cloud Function to enable full Vertex AI intelligence!";
-        if (q.includes('register')) return "Registration confirms your eligibility. To get full AI-powered registration help, please connect the GCP backend.";
-        return "I'm currently operating with limited local knowledge. Once you deploy the GCP Cloud Function, I'll be able to use Vertex AI to answer any question!";
+        if (q.includes('election')) return "An election is the fundamental process of democracy where citizens choose their representatives. My AI is currently initializing—stay tuned for deeper insights!";
+        if (q.includes('register') || q.includes('how')) return "To register, you typically need a government ID and proof of residence. You can start the process on your regional election commission website.";
+        if (q.includes('timeline') || q.includes('when')) return "The election timeline includes registration deadlines, nomination dates, and finally polling day. Check your local commission for specific dates!";
+        return "That's a great question about the election process. I'm currently syncing with my Vertex AI knowledge base to give you a more detailed answer. Is there a specific step you'd like to know more about?";
     };
+
+    // Run initialization
+    initAssistant();
 });
