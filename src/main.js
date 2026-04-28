@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // const part1 = 'AIza';
         // const part2 = 'Sy1234567890';
         // ==========================================
-        
-        const part1 = 'PASTE_FIRST_4_LETTERS_HERE'; 
-        const part2 = 'PASTE_THE_REST_HERE';
+
+        const part1 = 'AIza';
+        const part2 = 'SyBoLavrysH0I7U0DT6mV9ozF36DjtcMDTM';
         const apiKey = part1 + part2;
 
         const handleSend = async () => {
