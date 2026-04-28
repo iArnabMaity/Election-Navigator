@@ -42,10 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             assistantPanel.style.display = isVisible ? 'none' : 'flex';
         });
 
-        // ==========================================
-        // ⚠️ DEVELOPER: PASTE YOUR API KEY HERE ⚠️
-        // ==========================================
-        const GEMINI_API_KEY = 'AIzaSyBoLavrysH0I7U0DT6mV9ozF36DjtcMDTM';
+        let apiKey = localStorage.getItem('gcp_election_api_key');
 
         const handleSend = async () => {
             const query = userInput.value.trim();
@@ -54,9 +51,15 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage(query, 'user');
             userInput.value = '';
 
-            // Handle missing API Key
-            if (GEMINI_API_KEY === 'PASTE_YOUR_API_KEY_HERE' || !GEMINI_API_KEY) {
-                addMessage('<strong>Developer Notice:</strong> Please paste your Gemini API Key into the <code>src/main.js</code> file to activate the AI before submitting.', 'assistant');
+            // Handle API Key input
+            if (!apiKey) {
+                if (query.startsWith('AIza')) {
+                    apiKey = query;
+                    localStorage.setItem('gcp_election_api_key', apiKey);
+                    addMessage('API Key verified! Secure connection established. How can I assist you with the election process today?', 'assistant');
+                } else {
+                    addMessage('Please provide a valid Gemini API Key (starts with "AIza") to activate real AI capabilities.', 'assistant');
+                }
                 return;
             }
 
@@ -65,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage('<span style="opacity: 0.7; font-style: italic;">Consulting Vertex AI...</span>', 'assistant', loadingId);
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -99,7 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loadingNode) loadingNode.remove();
 
                 if (error.message === 'Invalid API Key') {
-                    addMessage('The provided Gemini API Key is invalid or expired. Please check main.js.', 'assistant');
+                    apiKey = null;
+                    localStorage.removeItem('gcp_election_api_key');
+                    addMessage('Your API Key is invalid, expired, or was revoked by Google. Please provide a new Gemini API Key.', 'assistant');
                 } else {
                     addMessage('Sorry, I encountered a network error connecting to the Google Cloud AI. Please try again.', 'assistant');
                 }
