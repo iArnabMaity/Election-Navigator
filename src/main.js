@@ -75,6 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Re-attach missing event listeners
+    sendBtn.addEventListener('click', handleSend);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
+
     const getLocalIntelligence = (query) => {
         const q = query.toLowerCase();
         if (q.includes('election')) return "An election is a democratic process for choosing leaders. I'm currently running in 'Offline Mode'—deploy your Cloud Function to enable full Vertex AI intelligence!";
