@@ -237,22 +237,36 @@ p.subtitle {
 
 .chat-history {
     flex-grow: 1;
-    padding: 1rem;
+    padding: 1.5rem;
     overflow-y: auto;
-}
-
-.chat-input-container {
-    padding: 1rem;
     display: flex;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.5);
 }
 
-input#user-query {
-    flex-grow: 1;
-    padding: 0.75rem 1.25rem;
-    border-radius: 100px;
-    border: 1px solid var(--gcp-grey-100);
-    outline: none;
+.message {
+    padding: 1rem;
+    border-radius: 20px;
+    max-width: 85%;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    animation: fadeIn 0.3s ease;
+}
+
+.message.assistant {
+    background: white;
+    align-self: flex-start;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    color: var(--gcp-grey-900);
+}
+
+.message.user {
+    background: var(--gcp-blue);
+    color: white;
+    align-self: flex-end;
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.2);
 }
 
 /* Animations */

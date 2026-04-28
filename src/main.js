@@ -38,21 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const addMessage = (text, sender) => {
         const msg = document.createElement('div');
         msg.className = `message ${sender}`;
-        msg.style.marginBottom = '1rem';
-        msg.style.padding = '0.75rem 1rem';
-        msg.style.borderRadius = '16px';
-        msg.style.maxWidth = '80%';
-        
-        if (sender === 'user') {
-            msg.style.background = 'var(--gcp-blue)';
-            msg.style.color = 'white';
-            msg.style.marginLeft = 'auto';
-        } else {
-            msg.style.background = 'white';
-            msg.style.border = '1px solid var(--gcp-grey-100)';
-            msg.style.marginRight = 'auto';
-        }
-
         msg.innerHTML = `<p>${text}</p>`;
         chatHistory.appendChild(msg);
         chatHistory.scrollTop = chatHistory.scrollHeight;
