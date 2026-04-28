@@ -4,10 +4,6 @@ FROM nginx:alpine
 # Copy the static files to the Nginx html directory
 COPY . /usr/share/nginx/html
 
-# Expose port 8080 (Cloud Run default)
-EXPOSE 8080
-
-# Configure Nginx to listen on 8080 instead of 80
-RUN sed -i 's/listen\(.*\)80;/listen 8080;/' /etc/nginx/conf.d/default.conf
-
-CMD ["nginx", "-g", "daemon off;"]
+# Cloud Run dynamically assigns a port via the PORT environment variable.
+# We overwrite the default Nginx config to listen on this exact port.
+CMD echo "server { listen $PORT; location / { root /usr/share/nginx/html; index index.html; } }" > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
