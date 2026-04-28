@@ -64,9 +64,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getMockResponse = (query) => {
         const q = query.toLowerCase();
-        if (q.includes('register')) return "To register, you'll need a valid photo ID and proof of address. Would you like me to find the nearest registration office using Cloud Maps?";
-        if (q.includes('timeline')) return "The election timeline usually spans 6 months, starting from voter roll updates to the final certification. You are currently in the 'Research' phase.";
-        if (q.includes('step')) return "There are 4 main steps: Registration, Research, Voting, and Counting. Which one would you like to dive into?";
-        return "That's a great question about the election process. I'm querying our Vertex AI knowledge base for the most accurate official answer. One moment...";
+        
+        // Comprehensive Mock Logic for Common Election Queries
+        if (q.includes('register') || q.includes('enroll')) {
+            return "To register, you'll need a valid photo ID (like a Passport or Driver's License) and proof of address. You can register online via the official portal or in person at your local election office. Would you like me to find the nearest registration office using Cloud Maps?";
+        }
+        if (q.includes('timeline') || q.includes('dates') || q.includes('when')) {
+            return "Election timelines vary by region, but generally follow this sequence: 1. Voter roll updates (6 months prior), 2. Candidate nominations (2 months prior), 3. Campaign period, and 4. Polling Day. You are currently in the 'Research' phase.";
+        }
+        if (q.includes('step') || q.includes('process') || q.includes('how')) {
+            return "The democratic process involves 4 main steps: Registration (getting on the roll), Research (knowing the candidates), Voting (casting your ballot), and Counting (verification of results). Which specific part can I explain further?";
+        }
+        if (q.includes('location') || q.includes('polling') || q.includes('where')) {
+            return "Your polling station is typically assigned based on your registered address. I can query the Google Maps API to find your specific station if you provide your zip code!";
+        }
+        if (q.includes('id') || q.includes('documents') || q.includes('identification')) {
+            return "Most regions require a government-issued photo ID. Accepted documents usually include a Driver's License, Passport, or National ID card. Would you like a regional checklist?";
+        }
+        if (q.includes('candidate') || q.includes('who')) {
+            return "I can help you analyze candidate platforms! Using Vertex AI, I can summarize official manifestos and compare their stances on key issues like health, education, and the economy.";
+        }
+        if (q.includes('secure') || q.includes('safety') || q.includes('hack')) {
+            return "Election integrity is our priority. We use GCP's Immutable Storage and VPC Service Controls to ensure all result data is tamper-proof and encrypted at rest.";
+        }
+
+        // Intelligent Fallback
+        return "That's an important question about the election. As your GCP Assistant, I'm currently using Vertex AI to analyze official electoral data for the most accurate answer. Is there a specific part of the registration or voting process you're concerned about?";
     };
 });
