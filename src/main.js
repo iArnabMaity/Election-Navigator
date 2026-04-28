@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Real AI Integration via GCP Cloud Function
         // Replace the URL with your actual deployed Cloud Function endpoint
-        const CLOUD_FUNCTION_URL = 'https://YOUR_REGION-YOUR_PROJECT_ID.cloudfunctions.net/election-assistant';
+        const CLOUD_FUNCTION_URL = 'https://election-navigator-190597456079.europe-southwest1.run.app/';
 
         try {
             const response = await fetch(CLOUD_FUNCTION_URL, {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) throw new Error('AI Service Offline');
-            
+
             const data = await response.json();
             addMessage(data.answer, 'assistant');
         } catch (error) {
