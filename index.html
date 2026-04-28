@@ -11,12 +11,36 @@
 </head>
 <body>
     <div class="app-container">
-        <header>
-            <h1>Election Navigator</h1>
-            <p class="subtitle">Guided by intelligence, powered by Google Cloud. Your step-by-step companion for the democratic process.</p>
+        <header class="hero-section">
+            <div class="hero-content">
+                <h1>Election Navigator</h1>
+                <p class="subtitle">Guided by intelligence, powered by Google Cloud. Your step-by-step companion for the democratic process.</p>
+                <div class="hero-stats">
+                    <div class="stat-item"><span class="stat-val">24/7</span><span class="stat-label">AI Support</span></div>
+                    <div class="stat-item"><span class="stat-val">100%</span><span class="stat-label">Secure Data</span></div>
+                    <div class="stat-item"><span class="stat-val">Real-time</span><span class="stat-label">Analytics</span></div>
+                </div>
+            </div>
+            <div class="hero-image-container">
+                <img src="assets/hero.png" alt="Election Concept" class="hero-img">
+            </div>
         </header>
 
+        <section class="info-grid">
+            <div class="info-card">
+                <span class="material-symbols-outlined">security</span>
+                <h4>Immutable Records</h4>
+                <p>Leveraging Cloud Storage & Firestore for tamper-proof data.</p>
+            </div>
+            <div class="info-card">
+                <span class="material-symbols-outlined">psychology</span>
+                <h4>Vertex Intelligence</h4>
+                <p>NLU models trained to understand complex electoral laws.</p>
+            </div>
+        </section>
+
         <main>
+            <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem;">Interactive Roadmap</h2>
             <div id="timeline" class="timeline-container">
                 <!-- Timeline steps will be injected here by main.js -->
             </div>
