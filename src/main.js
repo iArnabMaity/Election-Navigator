@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // ==========================================
         // ⚠️ DEVELOPER: PASTE YOUR API KEY HERE ⚠️
         // ==========================================
-        const GEMINI_API_KEY = 'PASTE_YOUR_API_KEY_HERE';
+        const GEMINI_API_KEY = 'AIzaSyBoLavrysH0I7U0DT6mV9ozF36DjtcMDTM';
 
         const handleSend = async () => {
             const query = userInput.value.trim();
@@ -84,13 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (response.status === 400) throw new Error('Invalid API Key');
                     throw new Error('AI Service Error');
                 }
-                
+
                 const data = await response.json();
                 let answer = data.candidates[0].content.parts[0].text;
-                
+
                 // Format basic markdown (bold and newlines)
                 answer = answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-                
+
                 addMessage(answer, 'assistant');
 
             } catch (error) {
