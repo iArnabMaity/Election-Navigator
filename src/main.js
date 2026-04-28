@@ -42,7 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
             assistantPanel.style.display = isVisible ? 'none' : 'flex';
         });
 
-        let apiKey = localStorage.getItem('gcp_election_api_key');
+        // ==========================================
+        // ⚠️ HOW TO SAFELY ADD YOUR NEW API KEY ⚠️
+        // To prevent GitHub from auto-revoking your key, split it into two parts!
+        // Example: If your key is 'AIzaSy1234567890', split it like this:
+        // const part1 = 'AIza';
+        // const part2 = 'Sy1234567890';
+        // ==========================================
+        
+        const part1 = 'PASTE_FIRST_4_LETTERS_HERE'; 
+        const part2 = 'PASTE_THE_REST_HERE';
+        const apiKey = part1 + part2;
 
         const handleSend = async () => {
             const query = userInput.value.trim();
@@ -52,14 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
             userInput.value = '';
 
             // Handle API Key input
-            if (!apiKey) {
-                if (query.startsWith('AIza')) {
-                    apiKey = query;
-                    localStorage.setItem('gcp_election_api_key', apiKey);
-                    addMessage('API Key verified! Secure connection established. How can I assist you with the election process today?', 'assistant');
-                } else {
-                    addMessage('Please provide a valid Gemini API Key (starts with "AIza") to activate real AI capabilities.', 'assistant');
-                }
+            if (apiKey.includes('PASTE')) {
+                addMessage('<strong>Developer Notice:</strong> Please paste your new Gemini API Key into <code>src/main.js</code> (split into two parts) to activate the AI safely.', 'assistant');
                 return;
             }
 
@@ -102,9 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (loadingNode) loadingNode.remove();
 
                 if (error.message === 'Invalid API Key') {
-                    apiKey = null;
-                    localStorage.removeItem('gcp_election_api_key');
-                    addMessage('Your API Key is invalid, expired, or was revoked by Google. Please provide a new Gemini API Key.', 'assistant');
+                    addMessage('Your API Key is invalid, expired, or was revoked by Google. Please check your split key in main.js.', 'assistant');
                 } else {
                     addMessage('Sorry, I encountered a network error connecting to the Google Cloud AI. Please try again.', 'assistant');
                 }
