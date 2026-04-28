@@ -65,30 +65,41 @@ document.addEventListener('DOMContentLoaded', () => {
     const getMockResponse = (query) => {
         const q = query.toLowerCase();
         
-        // Comprehensive Mock Logic for Common Election Queries
-        if (q.includes('register') || q.includes('enroll')) {
-            return "To register, you'll need a valid photo ID (like a Passport or Driver's License) and proof of address. You can register online via the official portal or in person at your local election office. Would you like me to find the nearest registration office using Cloud Maps?";
+        // 1. Core Election Concepts
+        if (q.includes('what is election') || q.includes('define election')) {
+            return "An election is a formal group decision-making process by which a population chooses an individual or multiple individuals to hold public office. It is the cornerstone of democracy, and our Navigator helps you participate with confidence.";
+        }
+        if (q.includes('what is registration') || q.includes('define registration') || q.includes('enrollment')) {
+            return "Voter registration is the process that verifies your eligibility to vote. It ensures you are on the official 'Voter Roll' for your district. Without registration, you cannot cast a ballot on polling day.";
+        }
+
+        // 2. Actionable Guides
+        if (q.includes('how to register') || q.includes('how do i register') || q.includes('registration process')) {
+            return "To register: 1. Verify eligibility (age/citizenship), 2. Gather ID (Passport/Driver License), 3. Fill out the form online or at a local office. Use our 'Timeline' section above to see exactly where you are in the process!";
         }
         if (q.includes('timeline') || q.includes('dates') || q.includes('when')) {
-            return "Election timelines vary by region, but generally follow this sequence: 1. Voter roll updates (6 months prior), 2. Candidate nominations (2 months prior), 3. Campaign period, and 4. Polling Day. You are currently in the 'Research' phase.";
+            return "The election cycle spans several months: roll updates (6mo out), nominations (2mo out), and finally Polling Day. Our Roadmap tracks these milestones in real-time using Cloud Firestore.";
         }
-        if (q.includes('step') || q.includes('process') || q.includes('how')) {
-            return "The democratic process involves 4 main steps: Registration (getting on the roll), Research (knowing the candidates), Voting (casting your ballot), and Counting (verification of results). Which specific part can I explain further?";
-        }
+
+        // 3. Logistics & ID
         if (q.includes('location') || q.includes('polling') || q.includes('where')) {
-            return "Your polling station is typically assigned based on your registered address. I can query the Google Maps API to find your specific station if you provide your zip code!";
+            return "Polling stations are assigned based on your registration address. Closer to the date, I can use the Google Maps Platform to show you the fastest route to your assigned booth.";
         }
         if (q.includes('id') || q.includes('documents') || q.includes('identification')) {
-            return "Most regions require a government-issued photo ID. Accepted documents usually include a Driver's License, Passport, or National ID card. Would you like a regional checklist?";
+            return "Typically, you need a government-issued photo ID. This includes a Passport, Driver's License, or Military ID. Some regions also accept utility bills as proof of address.";
         }
-        if (q.includes('candidate') || q.includes('who')) {
-            return "I can help you analyze candidate platforms! Using Vertex AI, I can summarize official manifestos and compare their stances on key issues like health, education, and the economy.";
+
+        // 4. Candidate & Research
+        if (q.includes('candidate') || q.includes('who') || q.includes('manifesto')) {
+            return "I can help you analyze candidate platforms! Vertex AI allows me to summarize thousands of pages of manifestos so you can compare stances on the issues that matter to you.";
         }
-        if (q.includes('secure') || q.includes('safety') || q.includes('hack')) {
-            return "Election integrity is our priority. We use GCP's Immutable Storage and VPC Service Controls to ensure all result data is tamper-proof and encrypted at rest.";
+
+        // 5. Security & Technology
+        if (q.includes('secure') || q.includes('safety') || q.includes('hack') || q.includes('trust')) {
+            return "We use GCP's advanced security. Data is stored in Cloud Storage with 'Bucket Lock' enabled, ensuring records are immutable and protected against unauthorized changes.";
         }
 
         // Intelligent Fallback
-        return "That's an important question about the election. As your GCP Assistant, I'm currently using Vertex AI to analyze official electoral data for the most accurate answer. Is there a specific part of the registration or voting process you're concerned about?";
+        return "That's a specific and important question. As your GCP-powered assistant, I can provide general guidance on registration, timelines, candidate research, and polling security. Which of those topics should we dive into?";
     };
 });
