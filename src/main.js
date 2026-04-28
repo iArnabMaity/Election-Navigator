@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => stepEl.classList.add('active'), index * 200);
     });
 
-    // 2. Assistant Logic - Robust Initialization
+    // 2. Assistant Logic - Real AI Integration
     const initAssistant = () => {
         if (!assistantToggle || !assistantPanel || !sendBtn || !userInput) {
             console.error('Chatbot elements not found');
@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
             assistantPanel.style.display = isVisible ? 'none' : 'flex';
         });
 
+        let apiKey = localStorage.getItem('gcp_election_api_key');
+
         const handleSend = async () => {
             const query = userInput.value.trim();
             if (!query) return;
@@ -49,36 +51,63 @@ document.addEventListener('DOMContentLoaded', () => {
             addMessage(query, 'user');
             userInput.value = '';
 
-            const CLOUD_FUNCTION_URL = 'https://election-navigator-190597456079.europe-southwest1.run.app/';
+            // Handle API Key input
+            if (!apiKey) {
+                if (query.startsWith('AIza')) {
+                    apiKey = query;
+                    localStorage.setItem('gcp_election_api_key', apiKey);
+                    addMessage('API Key verified! Secure connection established. How can I assist you with the election process today?', 'assistant');
+                } else {
+                    addMessage('Please provide a valid Gemini API Key (starts with "AIza") to activate real AI capabilities.', 'assistant');
+                }
+                return;
+            }
+
+            // Create loading message
+            const loadingId = 'loading-' + Date.now();
+            addMessage('<span style="opacity: 0.7; font-style: italic;">Consulting Vertex AI...</span>', 'assistant', loadingId);
 
             try {
-                // Controller to handle timeouts
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
-
-                const response = await fetch(CLOUD_FUNCTION_URL, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query }),
-                    signal: controller.signal
+                    body: JSON.stringify({
+                        contents: [{
+                            role: 'user',
+                            parts: [{ text: `You are the GCP Election Assistant, a helpful civic guide. Keep answers concise, clear, and professional. User query: ${query}` }]
+                        }]
+                    })
                 });
 
-                clearTimeout(timeoutId);
+                // Remove loading message
+                const loadingNode = document.getElementById(loadingId);
+                if (loadingNode) loadingNode.remove();
 
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) {
+                    if (response.status === 400) throw new Error('Invalid API Key');
+                    throw new Error('AI Service Error');
+                }
                 
                 const data = await response.json();
-                if (data && data.answer) {
-                    addMessage(data.answer, 'assistant');
-                } else {
-                    throw new Error('Invalid AI response format');
-                }
+                let answer = data.candidates[0].content.parts[0].text;
+                
+                // Format basic markdown (bold and newlines)
+                answer = answer.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                
+                addMessage(answer, 'assistant');
+
             } catch (error) {
-                console.warn('AI API Error, switching to local intelligence:', error);
-                setTimeout(() => {
-                    const fallback = getLocalIntelligence(query);
-                    addMessage(fallback, 'assistant');
-                }, 500);
+                console.error('AI Error:', error);
+                const loadingNode = document.getElementById(loadingId);
+                if (loadingNode) loadingNode.remove();
+
+                if (error.message === 'Invalid API Key') {
+                    apiKey = null;
+                    localStorage.removeItem('gcp_election_api_key');
+                    addMessage('Your API Key is invalid or expired. Please provide a new Gemini API Key.', 'assistant');
+                } else {
+                    addMessage('Sorry, I encountered a network error connecting to the Google Cloud AI. Please try again.', 'assistant');
+                }
             }
         };
 
@@ -88,20 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    const addMessage = (text, sender) => {
+    const addMessage = (text, sender, id = null) => {
         const msg = document.createElement('div');
         msg.className = `message ${sender}`;
+        if (id) msg.id = id;
         msg.innerHTML = `<p>${text}</p>`;
         chatHistory.appendChild(msg);
         chatHistory.scrollTop = chatHistory.scrollHeight;
-    };
-
-    const getLocalIntelligence = (query) => {
-        const q = query.toLowerCase();
-        if (q.includes('election')) return "An election is the fundamental process of democracy where citizens choose their representatives. My AI is currently initializing—stay tuned for deeper insights!";
-        if (q.includes('register') || q.includes('how')) return "To register, you typically need a government ID and proof of residence. You can start the process on your regional election commission website.";
-        if (q.includes('timeline') || q.includes('when')) return "The election timeline includes registration deadlines, nomination dates, and finally polling day. Check your local commission for specific dates!";
-        return "That's a great question about the election process. I'm currently syncing with my Vertex AI knowledge base to give you a more detailed answer. Is there a specific step you'd like to know more about?";
     };
 
     // Run initialization
