@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCP Election Assistant | Interactive Process Guide</title>
+    <meta name="description" content="An interactive assistant helping users understand the election process, timelines, and steps using Google Cloud components.">
+    <link rel="stylesheet" href="src/styles.css">
+    <!-- Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Election Navigator</h1>
+            <p class="subtitle">Guided by intelligence, powered by Google Cloud. Your step-by-step companion for the democratic process.</p>
+        </header>
+
+        <main>
+            <div id="timeline" class="timeline-container">
+                <!-- Timeline steps will be injected here by main.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Assistant Floating UI -->
+    <div class="assistant-trigger" id="assistant-toggle">
+        <span class="material-symbols-outlined" style="color: white; font-size: 32px;">smart_toy</span>
+    </div>
+
+    <div class="assistant-panel" id="assistant-panel">
+        <div class="assistant-header">
+            <h3>Cloud Assistant</h3>
+            <p style="font-size: 0.8rem; opacity: 0.8;">Powered by Dialogflow CX & Vertex AI</p>
+        </div>
+        <div class="chat-history" id="chat-history">
+            <div class="message assistant">
+                <p>Hello! I'm your Election Assistant. How can I help you today?</p>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="user-query" placeholder="Ask about timelines, registration...">
+            <button id="send-query" style="background: var(--gcp-blue-dark); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <span class="material-symbols-outlined">send</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="src/data.js"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>
